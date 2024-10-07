@@ -20,7 +20,7 @@ def generate_lyrics():
     if description:
         # Encode the description and generate lyrics
         inputs = tokenizer.encode(f"Write a song about: {description}", return_tensors='pt')
-        outputs = model.generate(inputs, max_length=100, num_return_sequences=1, no_repeat_ngram_size=2)
+        outputs = model.generate(inputs, max_length=500, num_return_sequences=1, no_repeat_ngram_size=2)
 
         generated_lyrics = tokenizer.decode(outputs[0], skip_special_tokens=True)
         print(f"Generated Lyrics: {generated_lyrics}")  # Log generated lyrics for debugging
