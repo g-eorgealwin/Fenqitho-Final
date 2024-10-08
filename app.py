@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load the model and tokenizer
-model_name = "gpt2"  # You can use 'gpt2-medium' or 'gpt2-large' if needed
+model_name = "gpt2"
 model = GPT2LMHeadModel.from_pretrained(model_name)
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 
@@ -14,13 +14,15 @@ tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 def generate_lyrics():
     data = request.get_json()
     description = data.get('description')
+    genre = data.get('genre')  # Get the genre from the request
 
-    print(f"Received description: {description}")  # Log incoming description for debugging
+    print(f"Received description: {description} with genre: {genre}")  # Log description and genre
 
     if description:
-        # Encode the description and generate lyrics
-        inputs = tokenizer.encode(f"Write a song about: {description}", return_tensors='pt')
-        outputs = model.generate(inputs, max_length=500, num_return_sequences=1, no_repeat_ngram_size=2)
+        # Adjust the prompt to include genre
+        prompt = f"Write a {genre} song about: {description}" if genre else f"Write a song about: {description}"
+        inputs = tokenizer.encode(prompt, return_tensors='pt')
+        outputs = model.generate(inputs, max_length=200, num_return_sequences=1, no_repeat_ngram_size=2)
 
         generated_lyrics = tokenizer.decode(outputs[0], skip_special_tokens=True)
         print(f"Generated Lyrics: {generated_lyrics}")  # Log generated lyrics for debugging
